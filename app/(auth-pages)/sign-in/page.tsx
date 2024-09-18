@@ -1,11 +1,10 @@
 "use client";
 
-import {
-  signInAction,
-  signInWithGithubAction,
-  signInWithGoogleAction,
-} from "@/app/actions";
+import { signInAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/form-message";
+import FormDivider from "@/components/formdivider";
+import SignInWithGithub from "@/components/signinwithgithub";
+import SignInWithGoogle from "@/components/signinwithgoogle";
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,19 +15,10 @@ export default function Login({ searchParams }: { searchParams: Message }) {
   return (
     <form className="flex-1 flex flex-col min-w-64">
       <h1 className="text-2xl font-medium">Sign in</h1>
-      <p className="text-sm text-foreground">
-        Don't have an account?{" "}
-        <Link className="text-foreground font-medium underline" href="/sign-up">
-          Sign up
-        </Link>
-      </p>
-      <Button type="button" onClick={() => signInWithGithubAction()}>
-        Sign in with Github
-      </Button>
-      <Button type="button" onClick={() => signInWithGoogleAction()}>
-        Sign in with Google
-      </Button>
       <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
+        <SignInWithGithub />
+        <SignInWithGoogle />
+        <FormDivider />
         <Label htmlFor="email">Email</Label>
         <Input name="email" placeholder="you@example.com" required />
         <div className="flex justify-between items-center">
@@ -51,6 +41,12 @@ export default function Login({ searchParams }: { searchParams: Message }) {
         </SubmitButton>
         <FormMessage message={searchParams} />
       </div>
+      <p className="text-sm text-foreground">
+        Don't have an account?{" "}
+        <Link className="text-foreground font-medium underline" href="/sign-up">
+          Sign up
+        </Link>
+      </p>
     </form>
   );
 }
