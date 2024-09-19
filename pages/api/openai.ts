@@ -2,11 +2,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import OpenAI from "openai";
 
 const baseURL = process.env.AI_BASE_URL;
-const apiKey = process.env.AI_API_KEY;
+const apiKey = process.env.OPENAI_API_KEY;
 
 const openai = new OpenAI({
   apiKey,
-  baseURL,
 });
 
 export default async function handler(
@@ -18,7 +17,7 @@ export default async function handler(
       const { query } = req.body;
       console.log(query);
       const completion = await openai.chat.completions.create({
-        model: "codellama/CodeLlama-70b-Instruct-hf",
+        model: "gpt-3.5-turbo",
         messages: [
           { role: "system", content: "Give short, crisp answers" },
           { role: "user", content: query },
@@ -26,9 +25,10 @@ export default async function handler(
         temperature: 0.7,
         max_tokens: 256,
       });
-
-      res.status(200).json({ message: completion.choices[0].message.content });
+      console.log(completion);
+      res.status(200).json({ message: completion.choices[0].message });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ message: error.message });
     }
   } else {
