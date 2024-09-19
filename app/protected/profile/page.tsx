@@ -16,22 +16,24 @@ export default async function Profile() {
   } = await createClient().auth.getUser();
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <Avatar>
-          <AvatarImage src={user?.user_metadata?.avatar_url} />
-          <AvatarFallback>
-            {user?.user_metadata?.full_name?.at(0)?.toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <CardTitle>{user?.user_metadata?.full_name}</CardTitle>
-        <CardDescription>{user?.user_metadata?.email}</CardDescription>
-      </CardHeader>
-      <CardFooter className="flex justify-between">
-        <form action={signOutAction}>
-          <Button variant="destructive">Sign out</Button>
-        </form>
-      </CardFooter>
-    </Card>
+    <div className="flex-grow w-full">
+      <Card className="w-full">
+        <CardHeader>
+          <Avatar>
+            <AvatarImage src={user?.user_metadata?.avatar_url} />
+            <AvatarFallback>
+              {user?.user_metadata?.full_name?.at(0)?.toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <CardTitle>{user?.user_metadata?.full_name}</CardTitle>
+          <CardDescription>{user?.user_metadata?.email}</CardDescription>
+        </CardHeader>
+        <CardFooter className="flex justify-between">
+          <form action={signOutAction}>
+            <Button variant="destructive">Sign out</Button>
+          </form>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }

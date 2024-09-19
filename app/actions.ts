@@ -164,3 +164,20 @@ export const signOutAction = async () => {
   await supabase.auth.signOut();
   return redirect("/sign-in");
 };
+
+export const createMessageAction = async (formData: FormData) => {
+  const supabase = createClient();
+  const { data, error } = await supabase.from("queries").insert([
+    {
+      authon: formData.user,
+      description: formData.query,
+    },
+  ]);
+
+  if (error) {
+    return encodedRedirect("error", "/", error.message);
+  }
+  if (data) {
+    console.log(data);
+  }
+};
