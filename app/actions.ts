@@ -129,17 +129,15 @@ export const signInWithGithubAction = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: "https://queryyyapp.vercel.app/auth/callback",
+      redirectTo: `${process.env.REDIRECT_URL}/auth/callback`,
     },
   });
 
   if (error) {
-    console.log(error);
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
   if (data.url) {
-    console.log(data);
     redirect(data.url);
   }
 };
@@ -148,6 +146,9 @@ export const signInWithGoogleAction = async () => {
   const supabase = createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
+    options: {
+      redirectTo: `${process.env.REDIRECT_URL}/auth/callback`,
+    },
   });
 
   if (error) {

@@ -34,6 +34,7 @@ Query App is a simple, efficient application designed to provide short and crisp
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
    GROQ_API_KEY=your_groq_api_key
+   REDIRECT_URL=http://localhost:3000
    ```
 
 4. Start the development server:
