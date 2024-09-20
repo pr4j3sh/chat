@@ -45,5 +45,4 @@ Query App is a simple, efficient application designed to provide short and crisp
 ## Usage
 
 1. Open the app in your browser: `http://localhost:3000`.
-2. Type your query in the input field and press `/` to focus.
-3. Receive a concise response immediately.
+2. Receive a concise response immediately.
