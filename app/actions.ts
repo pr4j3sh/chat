@@ -126,10 +126,11 @@ export const resetPasswordAction = async (formData: FormData) => {
 
 export const signInWithGithubAction = async () => {
   const supabase = createClient();
+  const origin = headers().get("origin");
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: `${process.env.REDIRECT_URL}auth/callback`,
+      redirectTo: `${origin}/auth/callback`,
     },
   });
 
@@ -144,10 +145,11 @@ export const signInWithGithubAction = async () => {
 
 export const signInWithGoogleAction = async () => {
   const supabase = createClient();
+  const origin = headers().get("origin");
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${process.env.REDIRECT_URL}auth/callback`,
+      redirectTo: `${origin}/auth/callback`,
     },
   });
 
