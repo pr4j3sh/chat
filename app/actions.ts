@@ -126,12 +126,8 @@ export const resetPasswordAction = async (formData: FormData) => {
 
 export const signInWithGithubAction = async () => {
   const supabase = createClient();
-  const origin = headers().get("origin");
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
-    options: {
-      redirectTo: `${origin}/auth/callback`,
-    },
   });
 
   if (error) {
@@ -147,12 +143,8 @@ export const signInWithGithubAction = async () => {
 
 export const signInWithGoogleAction = async () => {
   const supabase = createClient();
-  const origin = headers().get("origin");
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: {
-      redirectTo: `${origin}/auth/callback`,
-    },
   });
 
   if (error) {
