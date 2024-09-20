@@ -129,7 +129,7 @@ export const signInWithGithubAction = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: "http://localhost:3000/auth/callback",
+      redirectTo: `${process.env.REDIRECT_URL}auth/callback`,
     },
   });
 
@@ -147,7 +147,7 @@ export const signInWithGoogleAction = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "http://localhost:3000/auth/callback",
+      redirectTo: `${process.env.REDIRECT_URL}auth/callback`,
     },
   });
 
@@ -201,7 +201,6 @@ export const groqAction = async ({
   console.log("AI response inserted into DB:", data);
 };
 
-// createMessageAction: Inserts the user query into Supabase
 export const createMessageAction = async ({
   user,
   query,
