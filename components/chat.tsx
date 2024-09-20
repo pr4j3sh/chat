@@ -4,7 +4,15 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import { createClient } from "@/utils/supabase/client";
 
-export default function Chat({ userId, user, queries }) {
+export default function Chat({
+  userId,
+  user,
+  queries,
+}: {
+  userId: string;
+  user: any;
+  queries: any;
+}) {
   const supabase = createClient();
 
   const [newQueries, setNewQueries] = useState(queries);
@@ -27,7 +35,7 @@ export default function Chat({ userId, user, queries }) {
         },
         (payload) => {
           if (payload.new.userId === userId) {
-            setNewQueries((prevQueries) => [...prevQueries, payload.new]);
+            setNewQueries((prevQueries: any) => [...prevQueries, payload.new]);
           }
         },
       )
@@ -40,7 +48,7 @@ export default function Chat({ userId, user, queries }) {
 
   return (
     <>
-      {newQueries?.map((query) => (
+      {newQueries?.map((query: any) => (
         <div
           key={query?.id}
           className={`flex ${user?.full_name === query?.user?.full_name ? "justify-end" : "justify-start"}`}
