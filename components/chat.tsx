@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import { createClient } from "@/utils/supabase/client";
 
-export default function Chat({ user, queries }) {
+export default function Chat({ userId, user, queries }) {
   const supabase = createClient();
 
   const [newQueries, setNewQueries] = useState(queries);
@@ -26,7 +26,9 @@ export default function Chat({ user, queries }) {
           table: "queries",
         },
         (payload) => {
-          setNewQueries((prevQueries) => [...prevQueries, payload.new]);
+          if (payload.new.userId === userId) {
+            setNewQueries((prevQueries) => [...prevQueries, payload.new]);
+          }
         },
       )
       .subscribe();

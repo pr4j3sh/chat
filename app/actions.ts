@@ -166,7 +166,7 @@ export const signOutAction = async () => {
   return redirect("/sign-in");
 };
 
-export const groqAction = async (query: string) => {
+export const groqAction = async ({ query, userId }) => {
   const completion = await groq.chat.completions.create({
     messages: [
       { role: "system", content: "give short, crisp answers" },
@@ -184,6 +184,7 @@ export const groqAction = async (query: string) => {
         full_name: res.role,
       },
       query: res.content,
+      userId,
     },
   ]);
 
@@ -195,12 +196,13 @@ export const groqAction = async (query: string) => {
 };
 
 // createMessageAction: Inserts the user query into Supabase
-export const createMessageAction = async ({ user, query }) => {
+export const createMessageAction = async ({ user, query, userId }) => {
   const supabase = createClient();
   const { data, error } = await supabase.from("queries").insert([
     {
       user,
       query,
+      userId,
     },
   ]);
 

@@ -1,19 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SendHorizontalIcon } from "lucide-react";
 import { createMessageAction, groqAction } from "@/app/actions";
 
-export default function QueryForm({ user }) {
+export default function QueryForm({ user, userId }) {
+  const inputRef = useRef(null);
   const [query, setQuery] = useState("");
 
   const handleSend = async () => {
     try {
-      await createMessageAction({ user, query });
+      await createMessageAction({ user, query, userId });
 
-      await groqAction(query);
+      await groqAction({ query, userId });
 
       console.log("Query and response handled successfully");
     } catch (error) {
@@ -23,6 +24,20 @@ export default function QueryForm({ user }) {
     setQuery(""); // Clear input field after sending
   };
 
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.key === "/") {
+        event.preventDefault(); // Prevent default `/` behavior
+        inputRef.current?.focus(); // Focus the input field
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyPress);
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
+
   return (
     <form
       className="sticky bottom-2 z-100 bg-background"
@@ -31,10 +46,11 @@ export default function QueryForm({ user }) {
         handleSend();
       }}
     >
-      <div className="flex gap-2 [&>input]:mb-3 mt-8">
+      <div className="flex gap-2 my-2">
         <Input
+          ref={inputRef}
           type="text"
-          placeholder="Type a query..."
+          placeholder="Press '/' to focus..."
           required
           value={query}
           onChange={(e) => setQuery(e.target.value)}

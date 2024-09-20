@@ -15,8 +15,8 @@ export default function Login({ searchParams }: { searchParams: Message }) {
     <form className="flex-1 flex flex-col min-w-64">
       <h1 className="text-2xl font-medium">Sign in</h1>
       <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-        <SignInWithGithub />
         <SignInWithGoogle />
+        <SignInWithGithub />
         <FormDivider />
         <Label htmlFor="email">Email</Label>
         <Input name="email" placeholder="you@example.com" required />

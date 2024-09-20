@@ -14,14 +14,17 @@ export default async function ProtectedPage() {
     return redirect("/sign-in");
   }
 
-  const { data: queries } = await supabase.from("queries").select();
+  const { data: queries } = await supabase
+    .from("queries")
+    .select()
+    .eq("userId", user.id);
 
   return (
     <div className="flex-grow w-full flex flex-col gap-12">
       <div className="flex-grow flex flex-col gap-y-4">
-        <Chat user={user?.user_metadata} queries={queries} />{" "}
+        <Chat userId={user?.id} user={user?.user_metadata} queries={queries} />{" "}
       </div>
-      <QueryForm user={user?.user_metadata} />
+      <QueryForm user={user?.user_metadata} userId={user?.id} />
     </div>
   );
 }
