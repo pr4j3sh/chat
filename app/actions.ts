@@ -131,12 +131,10 @@ export const signInWithGithubAction = async () => {
   });
 
   if (error) {
-    console.log(error);
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
   if (data.url) {
-    console.log(data);
     redirect(data.url);
   }
 };
