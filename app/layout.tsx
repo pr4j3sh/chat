@@ -37,7 +37,7 @@ export default function RootLayout({
                 <HeaderAuth />
               </div>
             </nav>
-            <div className="container w-full flex flex-col py-4 flex-grow items-center md:justify-center ">
+            <div className="container w-full max-w-5xl flex flex-col py-4 flex-grow items-center md:justify-center ">
               {children}
             </div>
           </main>

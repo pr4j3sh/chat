@@ -4,28 +4,23 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SendHorizontalIcon } from "lucide-react";
+import { createMessageAction, groqAction } from "@/app/actions";
 
 export default function QueryForm({ user }) {
   const [query, setQuery] = useState("");
 
   const handleSend = async () => {
     try {
-      const formData = JSON.stringify({ user, query });
-      const response = await fetch("/api/openai", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: formData,
-      });
+      await createMessageAction({ user, query });
 
-      const data = await response.json();
-      console.log("Response:", data);
+      await groqAction(query);
+
+      console.log("Query and response handled successfully");
     } catch (error) {
-      console.error("Error sending query:", error);
+      console.error("Error handling query:", error);
     }
 
-    setQuery("");
+    setQuery(""); // Clear input field after sending
   };
 
   return (

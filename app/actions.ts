@@ -4,6 +4,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { groq } from "@/utils/groq";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -165,19 +166,47 @@ export const signOutAction = async () => {
   return redirect("/sign-in");
 };
 
-export const createMessageAction = async (formData: FormData) => {
+export const groqAction = async (query: string) => {
+  const completion = await groq.chat.completions.create({
+    messages: [
+      { role: "system", content: "give short, crisp answers" },
+      { role: "user", content: query },
+    ],
+    model: "llama3-8b-8192",
+  });
+
+  const res = completion.choices[0].message;
+
   const supabase = createClient();
   const { data, error } = await supabase.from("queries").insert([
     {
-      authon: formData.user,
-      description: formData.query,
+      user: {
+        full_name: res.role,
+      },
+      query: res.content,
     },
   ]);
 
   if (error) {
-    return encodedRedirect("error", "/", error.message);
+    throw new Error(error.message);
   }
-  if (data) {
-    console.log(data);
+
+  console.log("AI response inserted into DB:", data);
+};
+
+// createMessageAction: Inserts the user query into Supabase
+export const createMessageAction = async ({ user, query }) => {
+  const supabase = createClient();
+  const { data, error } = await supabase.from("queries").insert([
+    {
+      user,
+      query,
+    },
+  ]);
+
+  if (error) {
+    throw new Error(error.message);
   }
+
+  console.log("User query inserted into DB:", data);
 };

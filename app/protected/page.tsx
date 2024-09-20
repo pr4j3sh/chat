@@ -1,5 +1,6 @@
 import QueryForm from "@/components/query-form";
 import { createClient } from "@/utils/supabase/server";
+import Chat from "@/components/chat"; // Import client-side list component
 import { redirect } from "next/navigation";
 
 export default async function ProtectedPage() {
@@ -13,25 +14,14 @@ export default async function ProtectedPage() {
     return redirect("/sign-in");
   }
 
-  function handleSend(e: FormDataEvent) {
-    e.preventDefault();
-    console.log(e);
-  }
+  const { data: queries } = await supabase.from("queries").select();
 
   return (
     <div className="flex-grow w-full flex flex-col gap-12">
-      <div className="flex-grow flex flex-col gap-y-2">
-        <div className={`flex`}>
-          <div className={`w-5/6 flex flex-col gap-1 border p-2 rounded-lg  `}>
-            <div className={`flex items-center justify-between`}>
-              <span className="font-semibold">John Doe</span>
-              <span className="text-muted-foreground text-sm">4:30 pm</span>
-            </div>
-            <span>Hey!</span>
-          </div>
-        </div>
+      <div className="flex-grow flex flex-col gap-y-4">
+        <Chat user={user?.user_metadata} queries={queries} />{" "}
       </div>
-      <QueryForm user={user} />
+      <QueryForm user={user?.user_metadata} />
     </div>
   );
 }
