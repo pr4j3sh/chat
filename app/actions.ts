@@ -128,13 +128,18 @@ export const signInWithGithubAction = async () => {
   const supabase = createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
+    options: {
+      redirectTo: "https://queryyyapp.vercel.app/auth/callback",
+    },
   });
 
   if (error) {
+    console.log(error);
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
   if (data.url) {
+    console.log(data);
     redirect(data.url);
   }
 };
