@@ -55,7 +55,7 @@ export default function Chat({
         >
           <div className={`w-5/6 flex flex-col gap-2 border p-4 rounded-lg`}>
             <div
-              className={`flex flex-col ${user?.full_name === query?.user?.full_name ? "md:flex-row-reverse" : "md:flex-row"}  items-center justify-between`}
+              className={`flex flex-col ${user?.full_name === query?.user?.full_name ? "items-end md:flex-row-reverse" : "items-start md:flex-row"}  md:items-center justify-between`}
             >
               <span className="font-semibold">{query?.user?.full_name}</span>
               <span className="text-muted-foreground text-sm">
