@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { createClient } from "@/utils/supabase/client";
+import QueryResponse from "./query-response";
 
 export default function Chat({
   userId,
@@ -65,7 +66,7 @@ export default function Chat({
             <span
               className={`flex ${user?.full_name === query?.user?.full_name ? "justify-end" : "justify-start"}`}
             >
-              {query?.query}
+              <QueryResponse markdown={query?.query} />
             </span>
           </div>
         </div>
