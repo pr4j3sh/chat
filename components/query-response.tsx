@@ -17,7 +17,7 @@ export default function QueryResponse({ markdown }: { markdown: string }) {
 
   return (
     <div
-      className="markdown-body"
+      className="max-w-full overflow-auto p-4 border rounded-lg"
       dangerouslySetInnerHTML={{ __html: htmlResponse }}
     />
   );
