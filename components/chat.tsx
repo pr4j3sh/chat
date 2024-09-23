@@ -63,11 +63,11 @@ export default function Chat({
                 {moment(query?.created_at).format("MMM D, YYYY | h:mm a")}
               </span>
             </div>
-            <span
+            <div
               className={`flex ${user?.full_name === query?.user?.full_name ? "justify-end" : "justify-start"}`}
             >
               <QueryResponse markdown={query?.query} />
-            </span>
+            </div>
           </div>
         </div>
       ))}
