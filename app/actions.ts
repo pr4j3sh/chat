@@ -197,8 +197,6 @@ export const groqAction = async ({
   if (error) {
     throw new Error(error.message);
   }
-
-  console.log("AI response inserted into DB:", data);
 };
 
 export const createMessageAction = async ({

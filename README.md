@@ -46,3 +46,8 @@ Query App is a simple, efficient application designed to provide short and crisp
 
 1. Open the app in your browser: `http://localhost:3000`.
 2. Receive a concise response immediately.
+
+## Development
+
+- Check out [Research Docs](/docs/research.md)
+- Check out [Technical Docs](/docs/technical.md)

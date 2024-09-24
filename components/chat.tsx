@@ -19,12 +19,6 @@ export default function Chat({
   const [newQueries, setNewQueries] = useState(queries);
 
   useEffect(() => {
-    setTimeout(() => {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-    }, 0);
-  }, [newQueries]);
-
-  useEffect(() => {
     const channel = supabase
       .channel("realtime queries")
       .on(
@@ -46,6 +40,12 @@ export default function Chat({
       supabase.removeChannel(channel);
     };
   }, [supabase, queries, setNewQueries]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }, 0);
+  }, [newQueries]);
 
   return (
     <>
