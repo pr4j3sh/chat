@@ -8,12 +8,12 @@ export default async function Index() {
         <p>
           &copy;{" "}
           <a
-            href="https://elevenco.vercel.app/"
+            href="https://pr4j3sh.github.io/pr4j3sh/"
             target="_blank"
             className="font-bold hover:underline"
             rel="noreferrer"
           >
-            eleven co.
+            pr4j3sh
           </a>
         </p>
       </footer>
