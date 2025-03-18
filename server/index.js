@@ -8,6 +8,7 @@ const amqp = require("amqplib/callback_api");
 const { createServer } = require("node:http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+const { ai } = require("@pr4j3sh/ai");
 
 let channel = null;
 let socket = null;
@@ -60,6 +61,7 @@ amqp.connect("amqp://localhost", (err, conn) => {
       { noAck: true },
     );
   });
+  console.log("connected to amqp");
 });
 
 app.post("/api/user/register", async (req, res) => {
@@ -148,6 +150,39 @@ app.post("/api/chat", authenticate, async (req, res) => {
     channel.sendToQueue(q, Buffer.from(JSON.stringify(message)));
 
     res.json({ message });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/chat/ai", authenticate, async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { msg } = req.body;
+
+    if (!channel) throw new Error("channel not established");
+
+    if (!msg) {
+      throw new Error("message cannot be empty");
+    }
+    const message = new Message({
+      msg,
+      sender: userId,
+    });
+
+    await message.save();
+
+    channel.sendToQueue(q, Buffer.from(JSON.stringify(message)));
+
+    const aiRes = await ai(msg);
+    const aiMessage = {
+      msg: aiRes,
+      sender: "ai",
+    };
+
+    channel.sendToQueue(q, Buffer.from(JSON.stringify(aiMessage)));
+
+    res.json({ message, aiMessage });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
