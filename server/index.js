@@ -4,10 +4,29 @@ const { User, Message } = require("./src/schema");
 const bcrypt = require("bcryptjs");
 const { generateToken } = require("./src/utils");
 const { authenticate } = require("./src/middleware");
+const amqp = require("amqplib/callback_api");
+const { createServer } = require("node:http");
+const { Server } = require("socket.io");
+const cors = require("cors");
 
-const server = express();
+let channel = null;
+let socket = null;
+const q = "chat";
 
-server.use(express.json());
+const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+app.use(cors({ origin: "*" }));
+app.use(express.json());
+
+io.on("connection", (sock) => {
+  socket = sock;
+});
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/chat")
@@ -18,7 +37,32 @@ mongoose
     console.error(err);
   });
 
-server.post("/api/user/register", async (req, res) => {
+amqp.connect("amqp://localhost", (err, conn) => {
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  }
+
+  conn.createChannel((err, ch) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    channel = ch;
+    channel.assertQueue(q, { durable: false });
+    channel.consume(
+      q,
+      (msg) => {
+        if (msg) {
+          io.emit("msg", JSON.parse(msg.content.toString()));
+        }
+      },
+      { noAck: true },
+    );
+  });
+});
+
+app.post("/api/user/register", async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -49,7 +93,7 @@ server.post("/api/user/register", async (req, res) => {
   }
 });
 
-server.post("/api/user/login", async (req, res) => {
+app.post("/api/user/login", async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -75,26 +119,40 @@ server.post("/api/user/login", async (req, res) => {
   }
 });
 
-server.post("/api/chat", authenticate, async (req, res) => {
-  const { userId } = req.user;
-  const { msg } = req.body;
-
-  if (!msg) {
-    throw new Error("message cannot be empty");
+app.get("/api/chat", authenticate, async (req, res) => {
+  try {
+    const messages = await Message.find();
+    res.json({ messages });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-  // save to db
-  const message = new Message({
-    msg,
-    sender: userId,
-  });
-
-  await message.save();
-
-  // put in queue
-
-  res.json({ message });
 });
 
-server.listen(5000, () => {
+app.post("/api/chat", authenticate, async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { msg } = req.body;
+
+    if (!channel) throw new Error("channel not established");
+
+    if (!msg) {
+      throw new Error("message cannot be empty");
+    }
+    const message = new Message({
+      msg,
+      sender: userId,
+    });
+
+    await message.save();
+
+    channel.sendToQueue(q, Buffer.from(JSON.stringify(message)));
+
+    res.json({ message });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.listen(5000, () => {
   console.log("running on 5000");
 });
