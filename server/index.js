@@ -92,7 +92,7 @@ server.post("/api/chat", authenticate, async (req, res) => {
 
   // put in queue
 
-  res.json({ msg });
+  res.json({ message });
 });
 
 server.listen(5000, () => {
