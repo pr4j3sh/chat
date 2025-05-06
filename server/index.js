@@ -1,14 +1,12 @@
 const express = require("express");
 const { default: mongoose } = require("mongoose");
-const { User, Message } = require("./src/schema");
-const bcrypt = require("bcryptjs");
-const { generateToken } = require("./src/utils");
-const { authenticate } = require("./src/middleware");
+const { Message } = require("./src/schema");
 const amqp = require("amqplib/callback_api");
 const { createServer } = require("node:http");
 const { Server } = require("socket.io");
 const cors = require("cors");
-const { ai } = require("@pr4j3sh/ai");
+const ai = require("@pr4j3sh/ai");
+const { authHandler } = require("@pr4j3sh/auth");
 
 let channel = null;
 let socket = null;
@@ -64,64 +62,7 @@ amqp.connect("amqp://localhost", (err, conn) => {
   console.log("connected to amqp");
 });
 
-app.post("/api/user/register", async (req, res) => {
-  try {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-      throw new Error("username and password are required");
-    }
-
-    const userExists = await User.findOne({ username });
-    if (userExists) {
-      throw new Error("user already exists");
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const user = new User({
-      username,
-      password: hashedPassword,
-    });
-
-    await user.save();
-
-    const token = await generateToken(user._id);
-
-    res.status(201).json({ token });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.post("/api/user/login", async (req, res) => {
-  try {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-      throw new Error("username and password are required");
-    }
-
-    const user = await User.findOne({ username });
-    if (!user) {
-      throw new Error("user does not exist");
-    }
-
-    const passMatch = await bcrypt.compare(password, user.password);
-    if (!passMatch) {
-      throw new Error("wrong credentials");
-    }
-
-    const token = await generateToken(user._id);
-
-    res.status(201).json({ token });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get("/api/chat", authenticate, async (req, res) => {
+app.get("/api/chat", authHandler, async (req, res) => {
   try {
     const messages = await Message.find();
     res.json({ messages });
@@ -130,9 +71,9 @@ app.get("/api/chat", authenticate, async (req, res) => {
   }
 });
 
-app.post("/api/chat", authenticate, async (req, res) => {
+app.post("/api/chat", authHandler, async (req, res) => {
   try {
-    const { userId } = req.user;
+    const { id, username } = req.user;
     const { msg } = req.body;
 
     if (!channel) throw new Error("channel not established");
@@ -142,7 +83,7 @@ app.post("/api/chat", authenticate, async (req, res) => {
     }
     const message = new Message({
       msg,
-      sender: userId,
+      sender: { _id: id, username },
     });
 
     await message.save();
@@ -155,9 +96,9 @@ app.post("/api/chat", authenticate, async (req, res) => {
   }
 });
 
-app.post("/api/chat/ai", authenticate, async (req, res) => {
+app.post("/api/chat/ai", authHandler, async (req, res) => {
   try {
-    const { userId } = req.user;
+    const { id, username } = req.user;
     const { msg } = req.body;
 
     if (!channel) throw new Error("channel not established");
@@ -167,7 +108,10 @@ app.post("/api/chat/ai", authenticate, async (req, res) => {
     }
     const message = new Message({
       msg,
-      sender: userId,
+      sender: {
+        _id: id,
+        username,
+      },
     });
 
     await message.save();
@@ -176,8 +120,11 @@ app.post("/api/chat/ai", authenticate, async (req, res) => {
 
     const aiRes = await ai(msg);
     const aiMessage = {
-      msg: aiRes,
-      sender: "ai",
+      msg: aiRes.toString(),
+      sender: {
+        _id: "ai-123456",
+        username: "ai",
+      },
     };
 
     channel.sendToQueue(q, Buffer.from(JSON.stringify(aiMessage)));
