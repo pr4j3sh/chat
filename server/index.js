@@ -90,7 +90,7 @@ app.post("/api/chat", authHandler, async (req, res) => {
 
     channel.sendToQueue(q, Buffer.from(JSON.stringify(message)));
 
-    res.json({ message });
+    res.json({ message: "message sent" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -118,7 +118,7 @@ app.post("/api/chat/ai", authHandler, async (req, res) => {
 
     channel.sendToQueue(q, Buffer.from(JSON.stringify(message)));
 
-    const aiRes = await ai(msg);
+    const aiRes = await ai(`${msg}, answer very briefly`);
     const aiMessage = {
       msg: aiRes.toString(),
       sender: {
@@ -129,7 +129,7 @@ app.post("/api/chat/ai", authHandler, async (req, res) => {
 
     channel.sendToQueue(q, Buffer.from(JSON.stringify(aiMessage)));
 
-    res.json({ message, aiMessage });
+    res.json({ message: "message sent" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
