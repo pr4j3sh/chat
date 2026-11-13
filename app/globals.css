@@ -27,6 +27,22 @@ body {
   );
 }
 
+/* Thin, quiet scrollbar for the feed */
+.chat-feed {
+  scrollbar-width: thin;
+  scrollbar-color: #27272a transparent;
+}
+.chat-feed::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-feed::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-feed::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 9999px;
+}
+
 /* Typing indicator dots */
 @keyframes typing-bounce {
   0%,

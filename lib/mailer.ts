@@ -10,10 +10,11 @@ function escapeHtml(s: string): string {
 }
 
 // one transport, reused across sends (module scope survives across requests
-// on a long-lived Node host)
+// on a long-lived Node host). trim: stray spaces/newlines pasted into hosting
+// env vars break Google auth
+const user = process.env.EMAIL_USER?.trim();
+const pass = process.env.EMAIL_APP_PASSWORD?.trim();
 const transporter = (() => {
-  const user = process.env.EMAIL_USER;
-  const pass = process.env.EMAIL_APP_PASSWORD;
   if (!user || !pass) return null;
   return nodemailer.createTransport({
     service: "gmail",
@@ -28,8 +29,8 @@ export async function sendMessageEmail(fromEmail: string, message: string) {
     );
   }
 
-  const user = process.env.EMAIL_USER as string;
-  const to = process.env.EMAIL_TO || user;
+  const fromUser = user as string;
+  const to = process.env.EMAIL_TO?.trim() || fromUser;
 
   const safeMessage = escapeHtml(message).replace(/\n/g, "<br>");
   const sentAt = new Date().toLocaleString("en-IN", {
@@ -39,7 +40,7 @@ export async function sendMessageEmail(fromEmail: string, message: string) {
   });
 
   await transporter.sendMail({
-    from: `"hmu · 4j3" <${user}>`,
+    from: `"hmu · 4j3" <${fromUser}>`,
     to,
     replyTo: fromEmail,
     subject: `hmu: message from ${fromEmail}`,

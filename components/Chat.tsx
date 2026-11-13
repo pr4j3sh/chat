@@ -48,10 +48,13 @@ export function Chat() {
   const [dateLabel, setDateLabel] = useState("");
   const [emailMessageId, setEmailMessageId] = useState<string | null>(null);
   const [editingEmail, setEditingEmail] = useState(false);
+  const [scrolledDown, setScrolledDown] = useState(false);
   const idRef = useRef(0);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const mountedRef = useRef(true);
   const busyRef = useRef(false);
+  const feedRef = useRef<HTMLElement | null>(null);
+  const nearBottomRef = useRef(true);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -64,6 +67,38 @@ export function Chat() {
     const t = setTimeout(() => setDateLabel(todayLabel()), 0);
     return () => clearTimeout(t);
   }, []);
+
+  const handleFeedScroll = useCallback(() => {
+    const el = feedRef.current;
+    if (!el) return;
+    setScrolledDown(el.scrollTop > 24);
+    nearBottomRef.current =
+      el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+  }, []);
+
+  const scrollToBottom = useCallback((smooth = true) => {
+    const el = feedRef.current;
+    if (!el) return;
+    el.scrollTo({
+      top: el.scrollHeight,
+      behavior: smooth ? "smooth" : "auto",
+    });
+  }, []);
+
+  // stick to the newest message, unless the reader scrolled up to read history
+  useEffect(() => {
+    if (nearBottomRef.current) scrollToBottom(false);
+    handleFeedScroll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, typing, scrollToBottom]);
+
+  // sending or submitting always snaps to the bottom
+  useEffect(() => {
+    if (phase === "sending" || phase === "done") {
+      nearBottomRef.current = true;
+      scrollToBottom();
+    }
+  }, [phase, scrollToBottom]);
 
   const wait = useCallback((ms: number) => {
     return new Promise<void>((resolve) => {
@@ -121,6 +156,7 @@ export function Chat() {
     async (value: string) => {
       if (busyRef.current) return;
       busyRef.current = true;
+      nearBottomRef.current = true;
       try {
         // editing an already-sent email: swap the bubble in place, no re-greet
         if (editingEmail && emailMessageId) {
@@ -159,6 +195,7 @@ export function Chat() {
     async (text: string, website?: string) => {
       if (busyRef.current) return;
       busyRef.current = true;
+      nearBottomRef.current = true;
       pushThem(text);
       setPhase("sending");
       try {
@@ -241,13 +278,19 @@ export function Chat() {
         </a>
       </footer>
 
-      {/* feed — latest message pinned to vertical center, older ones flow up and fade */}
-      <main className="feed-mask relative z-[1] flex min-h-0 flex-1 flex-col justify-center overflow-hidden px-4 py-6 sm:px-6">
+      {/* feed — centered while it fits, vertically scrollable once the chat grows */}
+      <main
+        ref={feedRef}
+        onScroll={handleFeedScroll}
+        className={`chat-feed relative z-[1] flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 ${
+          scrolledDown ? "feed-mask" : ""
+        }`}
+      >
         <div
           role="log"
           aria-live="polite"
           aria-relevant="additions"
-          className="mx-auto flex w-full max-w-none flex-col gap-2.5 md:w-[44vw] md:max-w-[720px] md:min-w-[420px]"
+          className="mx-auto my-auto flex w-full max-w-none flex-col gap-2.5 md:w-[44vw] md:max-w-[720px] md:min-w-[420px]"
         >
           {/* date divider */}
           {dateLabel && (
