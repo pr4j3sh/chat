@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUpRight, CodeXml, Pencil } from "lucide-react";
 import { Bubble, ChatMessage } from "./Bubble";
 import { TypingIndicator } from "./TypingIndicator";
 import { ChatInput } from "./ChatInput";
@@ -285,7 +286,11 @@ export function Chat() {
           rel="noopener noreferrer"
           className="group transition-colors duration-200 hover:text-zinc-200"
         >
-          source <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">↗</span>
+          <span className="flex items-center gap-1.5">
+            <CodeXml size={13} strokeWidth={2} aria-hidden="true" />
+            source
+            <ArrowUpRight aria-hidden="true" size={12} strokeWidth={2} className="inline-block transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </span>
         </a>
         <span aria-hidden="true" className="text-zinc-800">
           ·
@@ -296,7 +301,7 @@ export function Chat() {
           rel="noopener noreferrer"
           className="group transition-colors duration-200 hover:text-zinc-200"
         >
-          pr4j3sh <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">↗</span>
+          pr4j3sh <ArrowUpRight aria-hidden="true" size={12} strokeWidth={2} className="inline-block transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </a>
       </motion.footer>
 
@@ -355,9 +360,12 @@ export function Chat() {
                   className="group mt-0.5 flex items-center gap-1.5 self-end pr-1 font-serif italic text-[12px] text-zinc-600 transition-colors hover:text-zinc-200"
                   aria-label="Edit email"
                 >
-                  <svg className="transition-transform duration-200 group-hover:-rotate-6" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                  </svg>
+                  <Pencil
+                    size={11}
+                    strokeWidth={2}
+                    aria-hidden="true"
+                    className="transition-transform duration-200 group-hover:-rotate-6"
+                  />
                   edit
                 </button>
               ) : undefined;

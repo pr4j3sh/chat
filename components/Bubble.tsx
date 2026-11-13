@@ -3,6 +3,7 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
+import { CheckCheck } from "lucide-react";
 
 export type Sender = "me" | "them";
 
@@ -47,9 +48,7 @@ export function Bubble({ message, showAvatar = false, showName = false, action }
     >
       <span>{message.time}</span>
       {mine && (
-        <span className="text-zinc-500" aria-hidden="true">
-          ✓✓
-        </span>
+        <CheckCheck size={13} strokeWidth={2} className="text-zinc-500" aria-hidden="true" />
       )}
     </div>
   );
