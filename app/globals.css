@@ -31,9 +31,32 @@ body {
 .chat-feed {
   scrollbar-width: none;
   -ms-overflow-style: none;
+  scroll-behavior: smooth;
 }
 .chat-feed::-webkit-scrollbar {
   display: none;
+}
+
+/* Slow breathing for the backdrop spotlight */
+@keyframes spotlight-breathe {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.spotlight-breathe {
+  animation: spotlight-breathe 9s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-breathe {
+    animation: none;
+  }
+  .chat-feed {
+    scroll-behavior: auto;
+  }
 }
 
 /* Typing indicator dots */

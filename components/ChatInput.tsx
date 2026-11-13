@@ -48,8 +48,20 @@ export function ChatInput({ mode, sending, onSubmitEmail, onSubmitMessage, initi
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.5 }}
-        className="w-full pt-2 text-center font-serif text-[10px] uppercase tracking-[0.3em] text-zinc-600 select-none"
+        className="flex w-full select-none items-center justify-center gap-2 pt-2 text-center font-serif text-[10px] uppercase tracking-[0.3em] text-zinc-600"
       >
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="text-zinc-500">
+          <motion.path
+            d="M4 12.5l5.2 5.2L20 6.8"
+            stroke="currentColor"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.55, delay: 0.25, ease: "easeOut" }}
+          />
+        </svg>
         message delivered
       </motion.p>
     );
@@ -98,9 +110,15 @@ export function ChatInput({ mode, sending, onSubmitEmail, onSubmitMessage, initi
       className="flex w-full flex-col items-end gap-1.5"
     >
       {error && (
-        <p className="pr-2 text-xs text-zinc-500" role="alert">
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="pr-2 text-xs text-zinc-500"
+          role="alert"
+        >
           {error}
-        </p>
+        </motion.p>
       )}
       <p aria-hidden="true" className="select-none pr-2 font-serif text-[9px] uppercase tracking-[0.3em] text-zinc-600">
         {caption ?? (isEmail ? "01 · your email" : "02 · your message")}
@@ -165,7 +183,7 @@ export function ChatInput({ mode, sending, onSubmitEmail, onSubmitMessage, initi
               exit={{ opacity: 0, scale: 0.5 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
               aria-label={isEmail ? "Send email" : "Send message"}
-              className="flex size-8 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-zinc-950 transition hover:bg-white active:scale-90 disabled:opacity-60"
+              className="group flex size-8 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-zinc-950 transition hover:bg-white active:scale-90 disabled:opacity-60"
             >
               {sending ? (
                 <svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -173,7 +191,7 @@ export function ChatInput({ mode, sending, onSubmitEmail, onSubmitMessage, initi
                   <path className="opacity-90" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z" />
                 </svg>
               ) : (
-                <svg className="size-4 translate-x-px" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <svg className="size-4 translate-x-px transition-transform duration-200 group-hover:translate-x-[3px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z" />
                 </svg>
               )}

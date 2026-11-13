@@ -58,9 +58,9 @@ export function Bubble({ message, showAvatar = false, showName = false, action }
     return (
       <motion.div
         layout
-        initial={{ opacity: 0, y: 24, scale: 0.9, filter: "blur(3px)" }}
+        initial={{ opacity: 0, y: 26, scale: 0.92, filter: "blur(4px)" }}
         animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-        transition={{ type: "spring", stiffness: 380, damping: 32, mass: 0.9 }}
+        transition={{ type: "spring", stiffness: 260, damping: 27, mass: 1.05 }}
         className="flex w-full flex-col items-end"
       >
         <div className="max-w-[82%] sm:max-w-[75%]">{bubble}</div>
@@ -73,21 +73,32 @@ export function Bubble({ message, showAvatar = false, showName = false, action }
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 24, scale: 0.9, filter: "blur(3px)" }}
+      initial={{ opacity: 0, y: 26, scale: 0.92, filter: "blur(4px)" }}
       animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-      transition={{ type: "spring", stiffness: 380, damping: 32, mass: 0.9 }}
+      transition={{ type: "spring", stiffness: 260, damping: 27, mass: 1.05 }}
       className="flex w-full items-end gap-2.5"
     >
       {/* avatar slot — reserved so bubbles align */}
       <div className="flex size-7 shrink-0 items-end">
         {showAvatar && (
-          <Image
-            src="/avatar.jpg"
-            alt="4j3"
-            width={28}
-            height={28}
-            className="size-7 rounded-full object-cover grayscale ring-1 ring-white/15"
-          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 22,
+              delay: 0.12,
+            }}
+          >
+            <Image
+              src="/avatar.jpg"
+              alt="4j3"
+              width={28}
+              height={28}
+              className="size-7 rounded-full object-cover grayscale ring-1 ring-white/15"
+            />
+          </motion.div>
         )}
       </div>
       <div className="flex min-w-0 max-w-[82%] flex-col items-start sm:max-w-[75%]">

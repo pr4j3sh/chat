@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Instrument_Serif } from "next/font/google";
+import { MotionConfig } from "framer-motion";
 import { Cursor } from "@/components/Cursor";
 import "./globals.css";
 
@@ -44,8 +45,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="h-full bg-[#0a0a0a] text-zinc-100 overflow-hidden">
-        <Cursor />
-        {children}
+        <MotionConfig reducedMotion="user">
+          <Cursor />
+          {children}
+        </MotionConfig>
       </body>
     </html>
   );

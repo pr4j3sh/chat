@@ -1,13 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Bubble, ChatMessage } from "./Bubble";
 import { TypingIndicator } from "./TypingIndicator";
 import { ChatInput } from "./ChatInput";
 import { Backdrop } from "./Backdrop";
 
 type Phase = "intro" | "awaiting-email" | "greeting" | "awaiting-message" | "sending" | "done";
+
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const INTRO_SCRIPT: { text: string; typing: number; gap: number }[] = [
   { text: "hey, 4j3 here", typing: 1100, gap: 350 },
@@ -87,7 +89,7 @@ export function Chat() {
 
   // stick to the newest message, unless the reader scrolled up to read history
   useEffect(() => {
-    if (nearBottomRef.current) scrollToBottom(false);
+    if (nearBottomRef.current) scrollToBottom();
     handleFeedScroll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages, typing, scrollToBottom]);
@@ -136,7 +138,7 @@ export function Chat() {
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
-      await wait(700);
+      await wait(900);
       for (const line of INTRO_SCRIPT) {
         if (cancelled) return;
         await pushMe(line.text, line.typing + Math.random() * 400);
@@ -241,29 +243,49 @@ export function Chat() {
       <Backdrop />
 
       {/* floating status line — no navbar chrome */}
-      <div className="absolute left-5 top-5 z-10 flex select-none items-center gap-2 font-serif text-[10px] uppercase tracking-[0.35em] text-zinc-500">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 0.15, ease: EASE }}
+        className="absolute left-5 top-5 z-10 flex select-none items-center gap-2 font-serif text-[10px] uppercase tracking-[0.35em] text-zinc-500"
+      >
         <span className="relative flex size-1.5">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-zinc-400 opacity-60" />
           <span className="relative inline-flex size-1.5 rounded-full bg-zinc-300" />
         </span>
         4j3&nbsp;·&nbsp;online
-      </div>
-      <div className="absolute right-5 top-5 z-10 select-none font-serif text-[10px] uppercase tracking-[0.35em] text-zinc-700">
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
+        className="absolute right-5 top-5 z-10 select-none font-serif text-[10px] uppercase tracking-[0.35em] text-zinc-700"
+      >
         hmu
-      </div>
+      </motion.div>
 
       {/* corner wordmark */}
-      <footer className="pointer-events-none absolute bottom-4 left-5 z-10 select-none font-serif text-[10px] uppercase tracking-[0.35em] text-zinc-700">
+      <motion.footer
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 0.4, ease: EASE }}
+        className="pointer-events-none absolute bottom-4 left-5 z-10 select-none font-serif text-[10px] uppercase tracking-[0.35em] text-zinc-700"
+      >
         4j3&nbsp;&nbsp;·&nbsp;&nbsp;hmu
-      </footer>
-      <footer className="absolute bottom-4 right-5 z-10 flex select-none items-center gap-4 rounded-full border border-white/5 bg-[#0a0a0a]/60 px-4 py-1.5 font-serif italic text-[13px] text-zinc-600 backdrop-blur-md">
+      </motion.footer>
+      <motion.footer
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 0.5, ease: EASE }}
+        className="absolute bottom-4 right-5 z-10 flex select-none items-center gap-4 rounded-full border border-white/5 bg-[#0a0a0a]/60 px-4 py-1.5 font-serif italic text-[13px] text-zinc-600 backdrop-blur-md"
+      >
         <a
           href="https://github.com/pr4j3sh/chat"
           target="_blank"
           rel="noopener noreferrer"
-          className="transition-colors duration-200 hover:text-zinc-200"
+          className="group transition-colors duration-200 hover:text-zinc-200"
         >
-          source <span aria-hidden="true">↗</span>
+          source <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">↗</span>
         </a>
         <span aria-hidden="true" className="text-zinc-800">
           ·
@@ -272,11 +294,11 @@ export function Chat() {
           href="https://pr4j3sh.github.io/pr4j3sh/"
           target="_blank"
           rel="noopener noreferrer"
-          className="transition-colors duration-200 hover:text-zinc-200"
+          className="group transition-colors duration-200 hover:text-zinc-200"
         >
-          pr4j3sh <span aria-hidden="true">↗</span>
+          pr4j3sh <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">↗</span>
         </a>
-      </footer>
+      </motion.footer>
 
       {/* feed — centered while it fits, vertically scrollable once the chat grows */}
       <main
@@ -294,13 +316,29 @@ export function Chat() {
         >
           {/* date divider */}
           {dateLabel && (
-            <div aria-hidden="true" className="mb-2 flex select-none items-center gap-3 px-1">
-              <span className="h-px flex-1 bg-white/[0.06]" />
+            <motion.div
+              aria-hidden="true"
+              className="mb-2 flex select-none items-center gap-3 px-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.45, ease: EASE }}
+            >
+              <motion.span
+                className="h-px flex-1 origin-center bg-white/[0.06]"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 1.1, delay: 0.45, ease: EASE }}
+              />
               <span className="font-serif text-[9px] uppercase tracking-[0.3em] text-zinc-600">
                 {dateLabel}
               </span>
-              <span className="h-px flex-1 bg-white/[0.06]" />
-            </div>
+              <motion.span
+                className="h-px flex-1 origin-center bg-white/[0.06]"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 1.1, delay: 0.45, ease: EASE }}
+              />
+            </motion.div>
           )}
 
           <AnimatePresence initial={false}>
@@ -314,10 +352,10 @@ export function Chat() {
                 <button
                   type="button"
                   onClick={startEditEmail}
-                  className="mt-0.5 flex items-center gap-1.5 self-end pr-1 font-serif italic text-[12px] text-zinc-600 transition-colors hover:text-zinc-200"
+                  className="group mt-0.5 flex items-center gap-1.5 self-end pr-1 font-serif italic text-[12px] text-zinc-600 transition-colors hover:text-zinc-200"
                   aria-label="Edit email"
                 >
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <svg className="transition-transform duration-200 group-hover:-rotate-6" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                   </svg>
                   edit
