@@ -12,6 +12,6 @@ hmu
    - `EMAIL_TO`, where messages should land (defaults to `EMAIL_USER`)
 3. `npm run dev`, <http://localhost:3000>
 
-## Scripts
+## usage
 
 - `npm run dev`, dev server
