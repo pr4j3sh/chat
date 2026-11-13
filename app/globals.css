@@ -27,20 +27,13 @@ body {
   );
 }
 
-/* Thin, quiet scrollbar for the feed */
+/* Hidden scrollbar — the feed scrolls without any visible chrome */
 .chat-feed {
-  scrollbar-width: thin;
-  scrollbar-color: #27272a transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 .chat-feed::-webkit-scrollbar {
-  width: 6px;
-}
-.chat-feed::-webkit-scrollbar-track {
-  background: transparent;
-}
-.chat-feed::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 9999px;
+  display: none;
 }
 
 /* Typing indicator dots */
