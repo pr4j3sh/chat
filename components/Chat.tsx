@@ -54,6 +54,7 @@ export function Chat() {
   const busyRef = useRef(false);
 
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
       mountedRef.current = false;
     };
